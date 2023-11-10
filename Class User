@@ -1,0 +1,80 @@
+<?php
+class User {
+    private $username;
+    private $password;
+    private $name;
+    private $email;
+    private $phoneNumber;
+    private $birthdate;
+
+    // Konstruktor untuk inisialisasi objek User
+    public function __construct($username, $password, $name, $email, $phoneNumber, $birthdate) {
+        $this->username = $username;
+        $this->password = $password;
+        $this->name = $name;
+        $this->email = $email;
+        $this->phoneNumber = $phoneNumber;
+        $this->birthdate = $birthdate;
+    }
+
+    // Methods untuk melakukan proses login
+    public function login() {
+        $validUser = $this->checkCredentials();
+
+        if ($validUser) {
+            session_start();
+            $_SESSION['username'] = $this->username;
+            return true; // Jika login berhasil
+        } else {
+            return false; // Jika login gagal
+        }
+    }
+
+    // Metode untuk proses daftar akun
+    public function signUp() {
+        $registrationSuccessful = $this->saveToDatabase();
+
+        return $registrationSuccessful;
+    }
+
+    // Metode untuk memeriksa kecocokan kredensial (username dan password)
+    private function checkCredentials() {
+        $validUsername = 'admin';
+        $validPassword = 'password123';
+
+        return ($this->username == $validUsername && $this->password == $validPassword);
+    }
+
+    // Metode untuk menyimpan data pengguna ke dalam database
+    private function saveToDatabase() {
+        // Return true jika pendaftaran berhasil, false sebaliknya
+        return true;
+    }
+
+    // Metode untuk memeriksa apakah pengguna telah login
+    public static function isLoggedIn() {
+        session_start();
+        return isset($_SESSION['username']);
+    }
+
+    // Metode untuk mendapatkan username pengguna yang telah login
+    public static function getLoggedInUsername() {
+        session_start();
+        return isset($_SESSION['username']) ? $_SESSION['username'] : null;
+    }
+
+    // Metode untuk logout pengguna
+    public static function logout() {
+        session_start();
+        session_destroy();
+    }
+}
+
+// Contoh
+$user = new User($_POST['username'], $_POST['password'], $_POST['name'], $_POST['email'], $_POST['phone_number'], $_POST['birthdate']);
+if ($user->signUp()) {
+    echo 'Pendaftaran berhasil. Selamat datang, ' . User::getLoggedInUsername() . '!';
+} else {
+    echo 'Pendaftaran gagal. Mohon periksa kembali data yang dimasukkan.';
+}
+?>
